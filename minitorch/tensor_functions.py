@@ -574,7 +574,7 @@ class Sigmoid(Function):
     -------
     forward(ctx: Context, t1: Tensor) -> Tensor:
         Computes the sigmoid of the input tensor.
-        
+
     backward(ctx: Context, grad_output: Tensor) -> Tensor:
         Computes the gradient of the sigmoid operation with respect to the input tensor.
 
