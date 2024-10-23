@@ -844,7 +844,6 @@ def grad_central_difference(
     delta: Tensor = f(*vals1).sum() - f(*vals2).sum()
 
     return delta[0] / (2.0 * epsilon)
-    
 
 
 def grad_check(f: Any, *vals: Tensor) -> None:

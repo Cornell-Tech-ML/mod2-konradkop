@@ -537,7 +537,6 @@ class Tensor:
             dim_tensor = self._ensure_tensor(dim)
 
         return Sum.apply(input_tensor, dim_tensor)
-    
 
     def mean(self, dim: Optional[int] = None) -> Tensor:
         """Computes the mean of elements in the current tensor along the specified dimension (dim).
