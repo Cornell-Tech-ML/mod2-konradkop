@@ -469,47 +469,63 @@ class Mul(Function):
 
 class Permute(Function):
     @staticmethod
-    def forward(ctx: Context, t1: Tensor, newOrder: int) -> Tensor:
-        """Permutes the dimensions of the input tensor according to the specified order.
+    def forward(ctx: Context, t1: Tensor, order: Tensor) -> Tensor:
+        """Perform a permutation of the input tensor based on the specified order.
 
         Args:
         ----
-            ctx (Context): The context for saving information for backward computation.
-            t1 (Tensor): The input tensor.
-            newOrder (int): The new order of dimensions.
+            ctx (Context): The context object to save information for backward computation.
+            t1 (Tensor): The input tensor to be permuted.
+            order (Tensor): A tensor specifying the permutation order.
 
         Returns:
         -------
-            Tensor: A new tensor with permuted dimensions.
+            Tensor: A new tensor that is the result of permuting the input tensor according to the given order.
 
         """
-        ctx.save_for_backward(newOrder)
-        newTensor = t1._tensor.permute(*newOrder)
-        return Tensor.make(
-            storage=newTensor._storage,
-            shape=newTensor.shape,
+        order_tuple = tuple(int(i) for i in order.to_numpy().flatten())
+        ctx.save_for_backward(order)
+
+        tens_store = t1._tensor.permute(*order_tuple)
+
+        return minitorch.Tensor.make(
+            tens_store._storage,
+            tens_store.shape,
+            tens_store.strides,
+            backend=t1.backend,
         )
 
     @staticmethod
-    def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        """Computes the gradient of the permute operation.
+    def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
+        """Compute the gradient of the permutation operation.
 
         Args:
         ----
-            ctx (Context): The context that contains saved information from the forward pass.
-            grad_output (Tensor): The gradient of the output tensor from the loss function.
+            ctx (Context): The context object that contains saved values from the forward pass.
+            grad_output (Tensor): The gradient of the loss with respect to the output tensor.
 
         Returns:
         -------
-            Tensor: The gradient with respect to the input tensor.
+            Tuple[Tensor, float]: A tuple containing the gradient with respect to the input tensor
+                                  and a scalar (0.0) for compatibility with the framework.
 
         """
-        newOrder = ctx.saved_values[0]
-        newTensor = grad_output._tensor.permute(*newOrder)
-        return Tensor.make(
-            storage=newTensor._storage,
-            shape=newTensor.shape,
-        )
+        (order,) = ctx.saved_values
+        order_list = order.to_numpy().flatten()
+
+        reverse_order = [0] * len(order_list)
+        for index, value in enumerate(order_list):
+            reverse_order[int(value)] = index
+
+        # Create the output tensor using minitorch.Tensor.make
+        tens_store = grad_output._tensor.permute(*reverse_order)
+
+        return minitorch.Tensor.make(
+            tens_store._storage,
+            tens_store.shape,
+            tens_store.strides,
+            backend=grad_output.backend,
+        ), 0.0
 
 
 class ReLU(Function):
