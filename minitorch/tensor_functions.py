@@ -565,26 +565,42 @@ class ReLU(Function):
 
 
 class Sigmoid(Function):
+    """Custom Sigmoid activation function implementing forward and backward passes.
+
+    This class defines the forward and backward operations for the sigmoid function
+    as a part of a computational graph, enabling automatic differentiation.
+
+    Methods
+    -------
+    forward(ctx: Context, t1: Tensor) -> Tensor:
+        Computes the sigmoid of the input tensor.
+        
+    backward(ctx: Context, grad_output: Tensor) -> Tensor:
+        Computes the gradient of the sigmoid operation with respect to the input tensor.
+
+    """
+
     @staticmethod
     def forward(ctx: Context, t1: Tensor) -> Tensor:
-        """Computes the element-wise sigmoid activation function.
+        """Computes the forward pass of the sigmoid function.
 
         Args:
         ----
-            ctx (Context): The context for saving information for backward computation.
-            t1 (Tensor): The input tensor.
+            ctx (Context): The context to store information for backpropagation.
+            t1 (Tensor): The input tensor for which the sigmoid is computed.
 
         Returns:
         -------
-            Tensor: A new tensor containing the sigmoid applied values of `t1`.
+            Tensor: The output tensor after applying the sigmoid function.
 
         """
-        ctx.save_for_backward(t1)
-        return t1.f.sigmoid_map(t1)
+        ctx.save_for_backward(t1)  # Save input tensor for use in backward pass
+        return t1.f.sigmoid_map(t1)  # Apply sigmoid function to the input tensor
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
-        """Computes the gradient of the sigmoid operation.
+        """Computes the backward pass of the sigmoid function.
+
         Args:
         ----
             ctx (Context): The context that contains saved information from the forward pass.
@@ -592,10 +608,9 @@ class Sigmoid(Function):
 
         Returns:
         -------
-
             Tensor: The gradient with respect to the input tensor.
-        """
 
+        """
         # Retrieve the saved values from the context; in this case, we're assuming t1 is the input to the sigmoid function
         (t1,) = ctx.saved_values
 
