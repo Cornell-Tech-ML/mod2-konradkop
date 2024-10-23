@@ -596,9 +596,20 @@ class Sigmoid(Function):
             Tensor: The gradient with respect to the input tensor.
 
         """
+        
+        # Retrieve the saved values from the context; in this case, we're assuming t1 is the input to the sigmoid function
         (t1,) = ctx.saved_values
+        
+        # Compute the gradient with respect to the input tensor using the chain rule.
+        # The formula combines the gradients from the sigmoid function and the output gradient.
+
+        # 1. Calculate the gradient of the sigmoid using grad_output.
+        # This part applies the sigmoid derivative: sigmoid'(t1) = sigmoid(t1) * (1 - sigmoid(t1))
         return grad_output.f.add_zip(
+            # 2. First term: grad_output * sigmoid(t1) (for the positive contribution)
             grad_output.f.mul_zip(grad_output, grad_output.f.sigmoid_map(t1)),
+            
+            # 3. Second term: - (grad_output * grad_output * sigmoid(t1) * sigmoid(t1)) (for the negative contribution)
             grad_output.f.neg_map(
                 grad_output.f.mul_zip(
                     grad_output,

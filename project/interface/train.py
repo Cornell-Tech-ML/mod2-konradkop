@@ -121,7 +121,7 @@ def render_train_interface(
                     (max_epochs - epoch) * time_per_epoch,
                 )
             )
-        df.append({"epoch": epoch, "loss": total_loss, "correct": correct, "time per epoch": time_elapsed})
+        df.append({"epoch": epoch, "loss": total_loss, "correct": correct, "time per epoch": time_per_epoch})
         st_epoch_stats.write(pd.DataFrame(reversed(df)))
 
         st_epoch_image.plotly_chart(plot())
