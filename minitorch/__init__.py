@@ -1,3 +1,23 @@
+"""Module provides a comprehensive suite of tools for tensor operations,
+automatic differentiation, optimization, and related functionalities.
+
+Modules included:
+- tensor: Core tensor operations and data structures.
+- tensor_data: Utilities for tensor data handling.
+- tensor_ops: Fundamental tensor operations.
+- tensor_functions: Various tensor-related mathematical functions.
+- datasets: Datasets for testing and training.
+- optim: Optimization algorithms for training models.
+- autodiff: Automatic differentiation utilities.
+- scalar: Operations for scalar values.
+- scalar_functions: Functions for scalar computations.
+- testing: Testing utilities for validating tensor operations and functions.
+- module: Neural network modules and layers.
+
+This module aims to provide efficient and user-friendly interfaces for
+machine learning and numerical computing tasks.
+"""
+
 from .testing import MathTest, MathTestVariable  # type: ignore # noqa: F401,F403
 from .tensor_data import *  # noqa: F401,F403
 from .tensor import *  # noqa: F401,F403
